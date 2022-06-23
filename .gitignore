@@ -1,3 +1,7 @@
+# MacOS
+.DS_Store
+.localized
+
 # Logs
 logs
 *.log
