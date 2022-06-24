@@ -1,7 +1,5 @@
 showView();
 
-postWebKitMessage(['print','Test Test']);
-
 const loadImages = (urls) => {
 	// Check if the parameter is valid
 	if (!Array.isArray(urls)) {
@@ -98,7 +96,7 @@ isJSAllowed().then((jsAllowed) => {
 		try {
 			loadImages(info.urls).then((images) => {
 				info.images = images;
-				download(info);
+				save(info);
 			});
 		} catch (error) {
 			fail();
