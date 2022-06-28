@@ -158,12 +158,33 @@ isJSAllowed().then((jsAllowed) => {
 		info.urls = data.sources['0'].images;
 	});
 
+	// Remove everything that could cause a request to be sent
+	[
+		...document.head.children,
+		...document.body.children,	
+	].forEach((elem) => elem.remove());
+
 	allowRemoteContent();
 	isRemoteContentAllowed().then((contentAllowed) => {
 		if (!contentAllowed) {
 			location.reload();
 			return;
 		}
+
+		document.body.innerHTML = `
+		<style>
+			body {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				width: 100vw;
+				background-color: rgb(0, 0, 0);
+				color: rgb(255, 255, 255);
+			}
+		</style>
+		<h1>Now Downloading...</h1>
+		`;
 
 		doesSeriesExist(info.series.title).then((exists) => {
 			// If the series already exists, don't load additional information
