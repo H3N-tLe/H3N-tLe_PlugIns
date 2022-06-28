@@ -46,7 +46,7 @@ const loadImage = (url) => {
 		}
 	}
 
-	const image = { ext: url.pathname.split('.').pop(), b64: '' };
+	const image = { ext: '.' + url.pathname.split('.').pop(), b64: '' };
 
 	return new Promise((resolve, reject) => {
 		fetch(url).then((response) => {
