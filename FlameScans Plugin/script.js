@@ -1,3 +1,8 @@
+if (!location.pathname.match(/chapter/i)) {
+	alert('FAILED' + '\n\n' + 'Not the URL to a chapter.');
+	fail();
+}
+
 showView();
 
 const cloudflare = {
