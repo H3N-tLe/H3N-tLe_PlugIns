@@ -17,6 +17,23 @@ const cloudflare = {
 	}
 }
 
+const showMessage = (message) => {
+	document.body.innerHTML = `
+		<style>
+			body {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				width: 100vw;
+				background-color: rgb(0, 0, 0);
+				color: rgb(255, 255, 255);
+			}
+		</style>
+		<h1>${message.replaceAll('\n', '<br>')}</h1>
+		`;
+}
+
 const loadImage = (url) => {
 	// Check if the parameter is valid
 	if (typeof url !== 'string' && !(url instanceof URL)) {
@@ -119,7 +136,7 @@ const loadAndSave = (chapter, series, imgUrls) => {
 
 // Check if the URL points to a chapter
 if (!location.pathname.match(/chapter/i)) {
-	alert('FAILED' + '\n\n' + 'Not the URL to a chapter.');
+	showMessage('FAILED' + '\n\n' + 'Not the URL to a chapter.');
 	fail('Not the URL to a chapter.');
 }
 
@@ -171,20 +188,7 @@ isJSAllowed().then((jsAllowed) => {
 			return;
 		}
 
-		document.body.innerHTML = `
-		<style>
-			body {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				height: 100vh;
-				width: 100vw;
-				background-color: rgb(0, 0, 0);
-				color: rgb(255, 255, 255);
-			}
-		</style>
-		<h1>Now Downloading...</h1>
-		`;
+		showMessage('Now Downloading...');
 
 		doesSeriesExist(info.series.title).then((exists) => {
 			// If the series already exists, don't load additional information
