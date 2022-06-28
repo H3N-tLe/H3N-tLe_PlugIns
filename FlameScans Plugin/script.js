@@ -88,11 +88,22 @@ const loadAndSave = (chapter, series, imgUrls) => {
 		images: undefined,
 		series: {
 			title: series.title,
-			description: series.description,
-			status: series.status,
-			cover: series.cover,
 		}
 	};
+
+	if (typeof series.description === 'string') {
+		info.series.description = series.description;
+	}
+	if (typeof series.status === 'string') {
+		info.series.status = series.status;
+	}
+	if (typeof series.cover === 'object' &&
+		typeof series.cover.ext === 'string' &&
+		typeof series.cover.b64 === 'string'
+		) {
+		info.series.cover = series.cover;
+	}
+
 	try {
 		loadImages(imgUrls).then((images) => {
 			info.images = images;
