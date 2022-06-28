@@ -83,19 +83,19 @@ const loadImages = (urls) => {
 
 const loadAndSave = (chapter, series, imgUrls) => {
 	const info = {
-		chapterName: chapter.chapterName,
+		chapterName: chapter.chapterName.trim(),
 		nextUrl: chapter.nextUrl,
 		images: undefined,
 		series: {
-			title: series.title,
+			title: series.title.trim(),
 		}
 	};
 
 	if (typeof series.description === 'string') {
-		info.series.description = series.description;
+		info.series.description = series.description.trim();
 	}
 	if (typeof series.status === 'string') {
-		info.series.status = series.status;
+		info.series.status = series.status.trim();
 	}
 	if (typeof series.cover === 'object' &&
 		typeof series.cover.ext === 'string' &&
