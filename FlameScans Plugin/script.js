@@ -11,6 +11,7 @@ const loadImages = (urls) => {
 		let loaded = 0;
 
 		const done = () => {
+			loaded++;
 			if (loaded < urls.length) {
 				return;
 			}
@@ -34,7 +35,6 @@ const loadImages = (urls) => {
 				const reader = new FileReader();
 				reader.onload = () => {
 					images[i].b64 = reader.result.split(';base64,').pop();
-					loaded++;
 					done();
 				};
 				reader.readAsDataURL(blob);
