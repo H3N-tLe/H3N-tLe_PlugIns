@@ -34,7 +34,7 @@ const loadImage = (url) => {
 	return new Promise((resolve, reject) => {
 		fetch(url).then((response) => {
 			// Check if the response is valid
-			if (response.headers.get("content-type").startsWith('text/html')) {
+			if (response.headers.get('content-type').startsWith('text/html')) {
 				disallowRemoteContent();
 				cloudflare.bypass();
 				reject(new Error('Got HTML response'));
