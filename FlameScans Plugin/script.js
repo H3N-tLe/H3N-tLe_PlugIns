@@ -121,7 +121,7 @@ isJSAllowed().then((jsAllowed) => {
 	});
 
 	allowRemoteContent();
-	isContentAllowed().then((contentAllowed) => {
+	isRemoteContentAllowed().then((contentAllowed) => {
 		if (!contentAllowed) {
 			location.reload();
 			return;
