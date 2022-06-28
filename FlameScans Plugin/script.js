@@ -107,6 +107,7 @@ const loadAndSave = (chapter, series, imgUrls) => {
 	try {
 		loadImages(imgUrls).then((images) => {
 			info.images = images;
+			hideView();
 			save(info);
 		}).catch((error) => {
 			fail('Loading the images failed with an error: ' + error);
