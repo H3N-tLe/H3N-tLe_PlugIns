@@ -1,5 +1,22 @@
 showView();
 
+const cloudflare = {
+	isProtected: () => {
+		return document.title === 'Just a moment...'
+	},
+	bypass: () => {
+		isJSAllowed().then((jsAllowed) => {
+			if (jsAllowed) {
+				disallowJS();
+				showView();
+			} else {
+				allowJS();
+			}
+			location.reload();
+		});
+	}
+}
+
 const loadImages = (urls) => {
 	// Check if the parameter is valid
 	if (!Array.isArray(urls)) {
@@ -45,24 +62,15 @@ const loadImages = (urls) => {
 };
 
 isJSAllowed().then((jsAllowed) => {
+	// Cloudflare detection
+	if (cloudflare.isProtected()) {
+		cloudflare.bypass();
+		return;
+	}
 
 	if (!jsAllowed) {
 		allowJS();
 		location.reload();
-		return;
-	}
-
-	// Cloudflare detection
-	if (document.title === 'Just a moment...') {
-		/*/ Cloudflare bypass
-		isContentAllowed().then((contentAllowed) => {
-			if (contentAllowed) {
-				disallowContent();
-			} else {
-				allowContent();
-				location.reload();
-			}
-		});/**/
 		return;
 	}
 
