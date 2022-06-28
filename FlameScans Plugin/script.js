@@ -18,18 +18,18 @@ const cloudflare = {
 }
 
 const showMessage = (message) => {
-	document.body.innerHTML = `
+	document.head.innerHTML = `
 		<style>
 			body {
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				height: 100vh;
-				width: 100vw;
 				background-color: rgb(0, 0, 0);
 				color: rgb(255, 255, 255);
 			}
 		</style>
+	`;
+	document.body.innerHTML = `
 		<h1>${message.replaceAll('\n', '<br>')}</h1>
 		`;
 }
@@ -81,6 +81,7 @@ const loadImages = (urls) => {
 
 		const done = () => {
 			loaded++;
+			showMessage(`Loading images...</h1><h1>${loaded}/${urls.length}`);
 			if (loaded < urls.length) {
 				return;
 			}
