@@ -76,7 +76,7 @@ const loadImages = (urls) => {
 	}
 
 	return new Promise((resolve, reject) => {
-		const images = [];
+		const images = new Array(urls.length);
 		let loaded = 0;
 
 		const done = () => {
@@ -87,9 +87,9 @@ const loadImages = (urls) => {
 			resolve(images);
 		};
 
-		urls.forEach((url) => {
+		urls.forEach((url, i) => {
 			loadImage(url).then((image) => {
-				images.push(image);
+				images[i] = image;
 				done();
 			}).catch((error) => {
 				reject(error);
