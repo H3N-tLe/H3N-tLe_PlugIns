@@ -81,6 +81,30 @@ const loadImages = (urls) => {
 	});
 };
 
+const loadAndSave = (chapter, series, imgUrls) => {
+	const info = {
+		chapterName: chapter.chapterName,
+		nextUrl: chapter.nextUrl,
+		images: undefined,
+		series: {
+			title: series.title,
+			description: series.description,
+			status: series.status,
+			cover: series.cover,
+		}
+	};
+	try {
+		loadImages(imgUrls).then((images) => {
+			info.images = images;
+			save(info);
+		}).catch((error) => {
+			fail('Loading the images failed with an error: ' + error);
+		});
+	} catch (error) {
+		fail('Loading/saving the images failed with an error: ' + error);
+	}
+}
+
 // Check if the URL points to a chapter
 if (!location.pathname.match(/chapter/i)) {
 	alert('FAILED' + '\n\n' + 'Not the URL to a chapter.');
@@ -100,10 +124,12 @@ isJSAllowed().then((jsAllowed) => {
 		return;
 	}
 
+	const seriesLink = document.querySelector('.headpost > .allc > a');
+
 	// Chapter download
 	const info = {
 		series: {
-			title: document.querySelector('.headpost > .allc > a').innerText
+			title: seriesLink.innerText
 		},
 		chapterName: 'Chapter' + document.querySelector('.entry-title').innerText.split('Chapter').reverse()[0],
 	};
@@ -127,15 +153,42 @@ isJSAllowed().then((jsAllowed) => {
 			return;
 		}
 
-		try {
-			loadImages(info.urls).then((images) => {
-				info.images = images;
-				save(info);
-			}).catch((error) => {
-				fail('Loading the images failed with an error: ' + error);
-			});
-		} catch (error) {
-			fail('Loading/saving the images failed with an error: ' + error);
-		}
+		doesSeriesExist(info.series.title).then((exists) => {
+			// If the series already exists, don't load additional information
+			if (exists) {
+				loadAndSave(info, info.series, info.urls);
+				return;
+			}
+
+			let contentType = '';
+			try {
+				// Download the HTML of the series page
+				fetch(seriesLink.href).then((response) => {
+					// Determine the content type
+					contentType = response.headers.get('content-type').split(';')[0];
+					return response.text();
+				}).then((html) => {
+					// Parse the HTML
+					const parser = new DOMParser();
+					const doc = parser.parseFromString(html, contentType);
+
+					// Get the series description and status
+					info.series.description = doc.querySelector('.summary div[itemprop="description"] > p')?.innerText;
+					info.series.status = doc.querySelector('.status')?.innerText.toLowerCase();
+
+					// Try to get the cover image
+					loadImage(doc.querySelector('.thumb > img')?.src).then((image) => {
+						// If successful, save with the cover image
+						info.series.cover = image;
+						loadAndSave(info, info.series, info.urls);
+					}).catch((error) => {
+						// If that failed save the series without a cover image
+						loadAndSave(info, info.series, info.urls);
+					});
+				});
+			} catch (error) {
+				fail('Loading the series page failed with an error: ' + error);
+			}
+		});
 	});
 });
