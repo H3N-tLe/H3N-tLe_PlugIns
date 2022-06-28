@@ -48,7 +48,6 @@ isJSAllowed().then((jsAllowed) => {
 
 	if (!jsAllowed) {
 		allowJS();
-		allowContent();
 		location.reload();
 		return;
 	}
@@ -91,6 +90,7 @@ isJSAllowed().then((jsAllowed) => {
 	isContentAllowed().then((contentAllowed) => {
 		if (!contentAllowed) {
 			location.reload();
+			return;
 		}
 
 		try {
