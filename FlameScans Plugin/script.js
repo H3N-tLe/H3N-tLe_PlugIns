@@ -1,8 +1,3 @@
-if (!location.pathname.match(/chapter/i)) {
-	alert('FAILED' + '\n\n' + 'Not the URL to a chapter.');
-	fail('Not the URL to a chapter.');
-}
-
 showView();
 
 const cloudflare = {
@@ -85,6 +80,11 @@ const loadImages = (urls) => {
 		});
 	});
 };
+
+if (!location.pathname.match(/chapter/i)) {
+	alert('FAILED' + '\n\n' + 'Not the URL to a chapter.');
+	fail('Not the URL to a chapter.');
+}
 
 isJSAllowed().then((jsAllowed) => {
 	// Cloudflare detection
