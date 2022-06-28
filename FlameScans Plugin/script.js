@@ -1,6 +1,6 @@
 if (!location.pathname.match(/chapter/i)) {
 	alert('FAILED' + '\n\n' + 'Not the URL to a chapter.');
-	fail();
+	fail('Not the URL to a chapter.');
 }
 
 showView();
@@ -130,9 +130,11 @@ isJSAllowed().then((jsAllowed) => {
 			loadImages(info.urls).then((images) => {
 				info.images = images;
 				save(info);
+			}).catch((error) => {
+				fail('Loading the images failed with an error: ' + error);
 			});
 		} catch (error) {
-			fail();
+			fail('Loading/saving the images failed with an error: ' + error);
 		}
 	});
 });
