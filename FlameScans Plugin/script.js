@@ -31,7 +31,7 @@ const showMessage = (message) => {
 	`;
 	document.body.innerHTML = `
 		<h1>${message.replaceAll('\n', '<br>')}</h1>
-		`;
+	`;
 }
 
 const loadImage = (url) => {
