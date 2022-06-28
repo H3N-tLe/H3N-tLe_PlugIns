@@ -81,6 +81,7 @@ const loadImages = (urls) => {
 	});
 };
 
+// Check if the URL points to a chapter
 if (!location.pathname.match(/chapter/i)) {
 	alert('FAILED' + '\n\n' + 'Not the URL to a chapter.');
 	fail('Not the URL to a chapter.');
