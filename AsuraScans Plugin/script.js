@@ -213,8 +213,19 @@ try {
 						info.series.description = Array.from(doc.querySelectorAll('.summary div[itemprop="description"] > p')).map(a => a?.innerText).join(' ');
 						info.series.status = doc.querySelector('.status')?.innerText.toLowerCase();
 
+						const coverImg = doc.querySelector('.thumb > img');
+						let coverUrl = '';
+
+						for (const attr of coverImg.attributes) {
+							if (!attr.name.includes('src')) continue;
+							
+							try {
+								coverUrl = new URL(attr.value).href;
+							} catch (error) {}
+						}
+
 						// Try to get the cover image
-						loadImage(doc.querySelector('.thumb > img')?.src).then((image) => {
+						loadImage(coverUrl).then((image) => {
 							// If successful, save with the cover image
 							info.series.cover = image;
 							loadAndSave(info, info.series, info.urls);
