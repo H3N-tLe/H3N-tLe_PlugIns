@@ -161,7 +161,7 @@ isJSAllowed().then((jsAllowed) => {
 		series: {
 			title: seriesLink.innerText
 		},
-		chapterName: 'Chapter' + document.querySelector('.entry-title').innerText.split('Chapter').reverse()[0],
+		chapterName: 'Chapter ' + document.querySelector('.entry-title').innerText.split(/chapter/i).pop().trim().match(/^\d+(?:\.\d+)?/)[0],
 	};
 
 	const scripts = Array.from(document.scripts);
