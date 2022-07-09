@@ -211,7 +211,7 @@ isJSAllowed().then((jsAllowed) => {
 					const doc = parser.parseFromString(html, contentType);
 
 					// Get the series description and status
-					info.series.description = doc.querySelector('.summary div[itemprop="description"] > p')?.innerText;
+					info.series.description = Array.from(doc.querySelectorAll('.summary div[itemprop="description"] > p')).map(a=>a.innerText).join(' ');
 					info.series.status = doc.querySelector('.status')?.innerText.toLowerCase();
 
 					// Try to get the cover image
