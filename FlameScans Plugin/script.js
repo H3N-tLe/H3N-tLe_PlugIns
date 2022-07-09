@@ -80,7 +80,7 @@ try {
 
 			const done = () => {
 				loaded++;
-				showMessage(`Loading images...</h1><h1>${loaded}/${urls.length}`);
+				showMessage(`Loading images...\n${loaded}/${urls.length}`);
 				if (loaded < urls.length) {
 					return;
 				}
