@@ -1,5 +1,12 @@
 try {
 
+	const dontLoad = [
+		'https://www.asurascans.com/wp-content/uploads/2021/04/page100-10.jpg',
+		'https://www.asurascans.com/wp-content/uploads/2022/07/whiteend.png',
+		'https://www.asurascans.com/wp-content/uploads/2022/01/ENDING-PAGE.jpg',	
+		'https://www.asurascans.com/wp-content/uploads/2022/02/caught-up.jpg',
+	];
+
 	showView();
 
 	const cloudflare = {
@@ -172,7 +179,7 @@ try {
 			const data = JSON.parse(elem.innerHTML.replace(/^ts_reader\.run\(/, '').replace(/\);?$/, ''));
 
 			info.nextUrl = data.nextUrl;
-			info.urls = data.sources['0'].images;
+			info.urls = data.sources['0'].images.filter((url) => !dontLoad.includes(url));
 		});
 
 		// Remove everything that could cause a request to be sent
