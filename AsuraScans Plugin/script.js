@@ -218,7 +218,7 @@ try {
 
 						// Get the series description and status
 						info.series.description = Array.from(doc.querySelectorAll('.summary div[itemprop="description"] > p')).map(a => a?.innerText).join(' ');
-						info.series.status = doc.querySelector('.status')?.innerText.toLowerCase();
+						info.series.status = doc.querySelector('.tsinfo > .imptdt > i')?.innerText.toLowerCase();
 
 						const coverImg = doc.querySelector('.thumb > img');
 						let coverUrl = '';
