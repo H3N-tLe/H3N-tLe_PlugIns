@@ -18,6 +18,7 @@ try {
 				if (jsAllowed) {
 					disallowJS();
 					showView();
+					return;
 				} else {
 					allowJS();
 				}
