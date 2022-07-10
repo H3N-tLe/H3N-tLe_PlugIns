@@ -38,7 +38,7 @@ try {
 				color: rgb(255, 255, 255);
 			}
 		</style>`;
-		document.body.innerHTML = `<h1>${message.replaceAll('\n', '<br>')}</h1>`;
+		document.body.innerHTML = `<h1 style="text-align: center;">${message.replaceAll('\n', '<br>')}</h1>`;
 	};
 
 	const loadImage = (url) => {
