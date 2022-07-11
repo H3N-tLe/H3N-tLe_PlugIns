@@ -62,6 +62,7 @@ try {
 					disallowRemoteContent();
 					cloudflare.bypass();
 					reject(new Error('Got HTML response'));
+					return;
 				}
 
 				return response.blob();
