@@ -1,3 +1,5 @@
+const dbp = (message) => postWebKitMessage(['print', message]);
+
 try {
 
 	showView();
@@ -149,6 +151,8 @@ try {
 			return;
 		}
 
+		const title = document.querySelector('._1Gflr > a')?.innerText;
+
 		// Remove everything that could cause a request to be sent
 		[
 			...document.head.children,
@@ -162,71 +166,78 @@ try {
 				return;
 			}
 
-			doesSeriesExist(info.series.title).then((exists) => {
-				const apiUrl = 'https://api.mghubcdn.com/graphql';
-				const coverBaseUrl = 'https://thumb.mghubcdn.com/';
-				const imageBaseUrl = 'https://img.mghubcdn.com/file/imghub/';
+			const apiUrl = 'https://api.mghubcdn.com/graphql';
+			const coverBaseUrl = 'https://thumb.mghubcdn.com/';
+			const imageBaseUrl = 'https://img.mghubcdn.com/file/imghub/';
 
-				const slug = location.pathname.match(/([^\/]+)\/[^\/]+\/?$/)[1];
-				const number = location.pathname.match(/chapter-(\d+(?:\.\d+)?)\/?$/)[1];
+			const slug = location.pathname.match(/([^\/]+)\/[^\/]+\/?$/)[1];
+			const number = location.pathname.match(/chapter-(\d+(?:\.\d+)?)\/?$/)[1];
 
-				const minimalInfo = `{chapter(slug: "${slug}", number: ${number}){pages}, manga(slug: "${slug}"){title} )}`;
-				const fullInfo = `{chapter(slug: "${slug}", number: ${number}){pages}, manga(slug: "${slug}"){title, description, status, image} }`;
+			const requestInit = {
+				method: 'POST',
+				headers: {
+					'content-type': 'application/json',
+					'accept': 'application/json',
+				},
+				body: JSON.stringify({
+					query: `{chapter(slug: "${slug}", number: ${number}){pages}, manga(slug: "${slug}"){title, description, status, image} }`,
+				}),
+			};
 
-				const requestInit = {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'Accept': 'application/json',
-					},
-					body: JSON.stringify({
-						query: exists ? minimalInfo : fullInfo,
-					}),
+			dbp('Request init: ' + JSON.stringify(requestInit, null, 4));
+
+			showMessage('Now Downloading...');
+
+			fetch(apiUrl, requestInit).then((response) => {
+				dbp('Got info');
+				return response.json();
+			}).then((result) => {
+				if (result.errors) {
+					fail(result.errors.map((error) => error.message).join('\n'));
+					return;
 				}
 
-				showMessage('Now Downloading...');
+				const manga = result.data.manga;
+				const chapter = result.data.chapter;
 
-				fetch(apiUrl, requestInit).then((response) => {
-					return response.json();
-				}).then((result) => {
-					if (result.errors) {
-						fail(result.errors.map((error) => error.message).join('\n'));
-						return;
+				const info = {
+					series: {
+						title: manga.title,
+					},
+					chapterName: 'Chapter ' + number,
+				};
+
+				dbp('Created info object');
+
+				if (typeof manga.description === 'string') {
+					info.series.description = manga.description.trim();
+				}
+				if (typeof manga.status === 'string') {
+					info.series.status = manga.status.trim().toLowerCase();
+				}
+
+				try {
+					const nextUrl = new URL(document.querySelector('.next > a').href);
+
+					if (nextUrl.pathname.startsWith('/chapter/')) {
+						info.nextUrl = nextUrl.href;
+						dbp('Next URL: ' + info.nextUrl);
 					}
+				} catch (error) {
+					dbp('Failed to get next URL');
+				}
 
-					const manga = result.data.manga;
-					const chapter = result.data.chapter;
+				const imageUrls = [];
+				const pageCount = Object.keys(chapter.pages).length;
+				for (let i = 1; i <= pageCount; i++) {
+					imageUrls.push(imageBaseUrl + chapter.pages[i]);
+				}
 
-					const info = {
-						series: {
-							title: manga.title.trim(),
-						},
-						chapterName: 'Chapter ' + number,
-					}
+				dbp('Image URLs:\n  ' + imageUrls.join('\n  '));
 
-					if (typeof manga.description === 'string') {
-						info.series.description = manga.description.trim();
-					}
-					if (typeof manga.status === 'string') {
-						info.series.status = manga.status.trim().toLowerCase();
-					}
-
-					try {
-						const nextUrl = new URL(document.querySelector('.next > a').href);
-						
-						if (nextUrl.pathname.startsWith('/chapter/')) {
-							info.nextUrl = nextUrl.href;
-						}
-					} catch(error) {}
-
-					const imageUrls = [];
-					const pageCount = Object.keys(chapter.pages).length;
-					for (let i = 1; i <= pageCount; i++) {
-						imageUrls.push(imageBaseUrl + chapter.pages[i]);
-					}
-
+				doesSeriesExist(manga.title).then((exists) => {
 					// Check if we have the url to the cover
-					if (typeof manga.image === 'string' && manga.image.length > 0) {
+					if (exists) {
 						loadImage(coverBaseUrl + manga.image).then((image) => {
 							info.series.cover = image;
 							loadAndSave(chapter, info.series, imageUrls);
@@ -236,9 +247,9 @@ try {
 					} else {
 						loadAndSave(chapter, info.series, imageUrls);
 					}
-				}).catch((error) => {
-					fail('Fetching the chapter failed with an error: ' + error);
 				});
+			}).catch((error) => {
+				fail('Fetching the chapter failed with an error: ' + error);
 			});
 		});
 	});
